@@ -227,6 +227,109 @@ TypeScript strict, Tailwind, Recharts, React Query. Executive aesthetic. Complet
        prompt:`Tests (Jest + pytest) and DevOps for ExecView. Dockerfiles, docker-compose, GitHub Actions, .env.example, README. Complete.`}
     ]
   },
+  {id:"hr",emoji:"🧑‍💼",label:"HR",color:c.am,
+    project:"HireIQ",tagline:"AI Resume Screening & Talent Matching Platform",
+    desc:"Build an AI hiring tool that transforms how your HR team screens candidates. Upload 100+ resumes at once, define your ideal qualifications and role requirements, and let AI rank every candidate with a relevancy score. Customizable for any role — engineering, marketing, sales, design, or any position you're hiring for.",
+    features:[
+      "Bulk resume upload — drag-and-drop up to 100 PDF/DOCX resumes at once, AI extracts name, email, experience, skills, education, and certifications from each one automatically",
+      "Role requirement builder — define the position you're hiring for: job title, must-have skills, nice-to-have skills, minimum experience, education level, certifications, and custom criteria. Save templates for roles you hire repeatedly",
+      "AI relevancy scoring — every candidate gets a 0-100 relevancy score based on how well they match YOUR specific requirements. See exactly why each candidate scored high or low with detailed breakdowns",
+      "Smart candidate ranking — all candidates sorted by relevancy score with color-coded tiers: green (strong match 80+), yellow (potential match 50-79), red (weak match below 50). Filter by tier, skill, experience level",
+      "Candidate comparison — select 2-5 candidates side-by-side, see strengths and gaps for each, AI recommends who to interview first and why",
+      "Interview question generator — select a candidate, AI generates personalized interview questions based on their resume gaps, experience claims to verify, and role-specific technical questions",
+      "Hiring pipeline board — Kanban board tracking candidates through stages: New → Screened → Shortlisted → Interview → Offer → Hired/Rejected. Drag-and-drop between stages",
+      "Analytics dashboard — time-to-hire metrics, source effectiveness, pipeline conversion rates, diversity metrics, and AI recommendations to improve your hiring process",
+      "Role templates library — save and reuse requirement templates for common roles. Pre-built templates for Software Engineer, Product Manager, Designer, Marketing Manager, Sales Rep, and more",
+      "Export reports — generate PDF reports of shortlisted candidates with scores and reasoning, ready to share with hiring managers"
+    ],
+    agents:[
+      {name:"Frontend Interface",what:"Builds everything the HR team sees and interacts with — the resume upload area, role requirement forms, candidate cards with scores, comparison views, pipeline board, and analytics charts. This is the visual workspace where HR does all their screening work.",
+       prompt:`Build the complete frontend for HireIQ — an AI-powered resume screening and talent matching platform. Use Next.js 14 with TypeScript strict mode and Tailwind CSS.
+
+PAGES:
+/login (email/password login)
+/dashboard (stats overview: total candidates, open roles, avg time-to-hire, pipeline summary chart, recent activity feed, quick actions: "Upload Resumes" and "Create Role")
+/roles (list of all role requirements with candidate count per role, "Create Role" button)
+/roles/new (multi-step form: Job Title → Department → Must-Have Skills tag input → Nice-to-Have Skills tag input → Min Experience slider → Education Level dropdown → Certifications → Location/Remote toggle → Salary Range → Custom Criteria textarea → Save as Template toggle)
+/roles/[id] (role details with all requirements displayed, ranked candidate list for this role, "Upload Resumes" button, "Edit" button)
+/upload (drag-and-drop zone accepting PDF and DOCX, progress bar per file, batch upload up to 100 files, role selector dropdown to score against, "Upload & Analyze" button with streaming progress)
+/candidates (filterable sortable table: name, email, role applied, relevancy score with color bar, experience years, top skills tags, status badge. Filters: score range slider, tier select, skills multi-select, experience range, education. Search by name/email. Bulk actions: shortlist, reject, export)
+/candidates/[id] (full profile: extracted info card, relevancy score donut chart with breakdown radar chart showing category scores for Skills Match/Experience/Education/Certifications/Culture Fit, resume preview panel, AI assessment narrative, "Generate Interview Questions" button, status changer, notes section, timeline of actions)
+/compare (multi-select candidates → side-by-side cards with radar chart overlay, strengths/gaps table, AI recommendation panel: "Interview first" with reasoning)
+/pipeline (Kanban board: New | Screened | Shortlisted | Interview Scheduled | Offer | Hired | Rejected. Drag-and-drop candidate cards between columns. Cards show: name, role, score, days in stage)
+/analytics (Recharts: pipeline funnel, time-to-hire trend, source effectiveness pie, score distribution histogram, diversity metrics, AI recommendations panel)
+/templates (saved role templates grid, "Use Template" to pre-fill /roles/new, edit/delete)
+/settings (team members, notification preferences)
+
+COMPONENTS: ResumeUploader (drag-drop with progress), ScoreBar (colored 0-100), ScoreBadge (tier color), CandidateCard, CandidateTable, RequirementForm, SkillTagInput, RadarChart (Recharts), CompareGrid, PipelineBoard (HTML5 drag-drop), InterviewQuestions, ReportExport.
+
+TECH: TypeScript strict (no 'any'), Tailwind CSS only, Recharts for all charts, TanStack React Query for API, dark theme with warm HR-friendly accents (amber/gold), mobile responsive, loading skeletons, error boundaries. Complete package.json. ALL files complete. No TODO or placeholders.`},
+      {name:"Backend API",what:"Builds the server that handles resume uploads, processes files, manages candidates and roles, and coordinates with the AI engine. Like the back office that processes all applications — receives resumes, stores data, and delivers results to the frontend.",
+       prompt:`Build complete Python FastAPI backend for HireIQ.
+
+STRUCTURE: /backend/ with main.py, /routers/ (auth, roles, candidates, upload, compare, pipeline, analytics, templates), /services/, /models/, /schemas/, /prompts/, /utils/, requirements.txt, alembic.ini.
+
+ENDPOINTS (/api/v1/):
+Auth: JWT login/register/me/refresh
+Roles: CRUD, POST /roles with requirements JSONB, GET /roles/{id}/candidates (sorted by score)
+Upload: POST /upload/bulk (multipart, up to 100 files) → returns job_id, GET /upload/{job_id}/status (SSE streaming progress per file: uploading → extracting → scoring → complete)
+Candidates: GET /candidates (filterable: score_min, score_max, tier, skills, experience_min, role_id, status, search. Pagination. Sorting), GET /candidates/{id} (full profile + score breakdown), PUT /candidates/{id}/status, POST /candidates/{id}/interview-questions (SSE streaming), DELETE /candidates/{id}
+Compare: POST /compare (body: candidate_ids[], role_id) → SSE streaming comparison with recommendation
+Pipeline: GET /pipeline/{role_id} (candidates grouped by stage), PUT /pipeline/move (candidate_id, new_stage)
+Analytics: GET /analytics/overview, GET /analytics/pipeline-funnel, GET /analytics/time-to-hire, GET /analytics/score-distribution
+Templates: CRUD for role requirement templates
+Export: POST /export/shortlist (role_id, candidate_ids) → PDF generation
+
+TECH: JWT auth with role guards (admin/recruiter/viewer), Pydantic v2, SQLAlchemy async + asyncpg, Alembic migrations, SSE StreamingResponse for upload progress and AI endpoints, CORS, rate limiting, structured logging, file upload handling (PDF/DOCX up to 10MB each), consistent error format. Complete requirements.txt. All files complete. No placeholders.`},
+      {name:"AI Screening Engine",what:"The AI brain that reads resumes, understands qualifications, and scores candidates. This is what makes the tool intelligent — it extracts information from resume PDFs, compares candidates against your specific requirements, calculates relevancy scores with detailed reasoning, and generates personalized interview questions.",
+       prompt:`Build AI resume screening services for HireIQ in /backend/services/.
+
+FILES:
+resume_parser.py — Extract structured data from PDF/DOCX resumes using text extraction (PyPDF2 for PDF, python-docx for DOCX). Send extracted text to Claude AI to parse into structured JSON: {name, email, phone, linkedin, location, summary, experience: [{company, title, duration_months, description, skills_used}], education: [{institution, degree, field, year}], skills: [], certifications: [], languages: []}. Handle messy formatting, multi-page resumes, various layouts. Streaming progress updates.
+
+relevancy_scorer.py — Score a candidate against role requirements. Categories: Skills Match (0-100, weight 35%), Experience Relevance (0-100, weight 25%), Education Fit (0-100, weight 15%), Certifications (0-100, weight 10%), Overall Impression (0-100, weight 15%). Each category gets a score + 1-sentence justification. Final weighted score 0-100. Tier assignment: Strong (80+), Potential (50-79), Weak (<50). All streamed. Prompt engineering to ensure consistent, fair scoring.
+
+batch_processor.py — Process up to 100 resumes: async queue, parse each → score against selected role → save results. SSE streaming progress: {file_name, status, candidate_name, score, progress_pct}. Error handling per file (don't fail the whole batch if one resume is corrupted).
+
+candidate_comparer.py — Compare 2-5 candidates: side-by-side category scores, identify unique strengths per candidate, identify gaps, recommend interview order with reasoning. Streamed.
+
+interview_generator.py — Generate 10-15 personalized interview questions for a candidate: 3 experience verification questions (based on specific resume claims), 3 skill assessment questions (based on role requirements they partially match), 3 behavioral questions (based on their experience level), 2-3 role-specific technical questions, 2 culture/motivation questions. Each question includes: the question, why you're asking it, what a good answer looks like. Streamed.
+
+analytics_engine.py — Calculate hiring analytics: pipeline conversion rates, avg time per stage, score distribution analysis, source effectiveness if tracked, AI recommendations to improve process (e.g., "Your requirements for Senior Engineer may be too strict — only 5% of candidates score above 50. Consider making Python a nice-to-have instead of must-have.").
+
+PROMPTS in /backend/prompts/: resume_parser_system.txt, scoring_system.txt, comparison_system.txt, interview_system.txt, analytics_system.txt.
+
+TECH: All streaming async generators, comprehensive error handling, type hints everywhere, logging for every AI call, retry logic for AI calls. PyPDF2 and python-docx for file parsing. No hardcoded keys. Complete. No placeholders.`},
+      {name:"Database & File Storage",what:"Stores all candidate data, resumes, scores, role requirements, and pipeline stages permanently. Without this, everything disappears when you close the browser. Also handles file storage for uploaded resumes.",
+       prompt:`Build database layer and file storage for HireIQ. SQLAlchemy async + asyncpg + PostgreSQL.
+
+MODELS:
+User (email, name, password_hash, role enum: admin/recruiter/viewer, org_id)
+Organization (name, settings JSONB)
+RoleRequirement (org_id, title, department, must_have_skills JSONB, nice_to_have_skills JSONB, min_experience_years, education_level, certifications JSONB, location, remote_ok, salary_min, salary_max, custom_criteria text, is_template boolean, status enum: open/paused/closed, created_at — indexed)
+Candidate (org_id, role_id FK, name, email, phone, linkedin, location, summary text, experience JSONB, education JSONB, skills JSONB, certifications JSONB, languages JSONB, resume_file_path, resume_text text, relevancy_score Decimal, score_breakdown JSONB {skills_match, experience, education, certifications, overall, justifications}, tier enum: strong/potential/weak, status enum: new/screened/shortlisted/interview/offer/hired/rejected, stage_changed_at, notes JSONB, source, created_at — indexed on role_id + score + status)
+ComparisonReport (org_id, role_id, candidate_ids JSONB, analysis JSONB, recommendation text, created_at)
+InterviewPrepReport (candidate_id, questions JSONB, created_at)
+PipelineEvent (candidate_id, from_stage, to_stage, changed_by, created_at — for analytics)
+RoleTemplate (org_id, name, requirements JSONB)
+
+FILE STORAGE: /backend/utils/file_storage.py — save uploaded resumes to /uploads/{org_id}/{role_id}/{filename}, retrieve by path, cleanup on candidate delete.
+
+CRUD in /backend/crud/ — one file per model. Include filtering, pagination, sorting helpers.
+Alembic migrations.
+Seed script with: 1 org, 2 users, 3 sample roles (Software Engineer, Product Manager, Marketing Manager) with realistic requirements, 15 sample candidates with varied scores across roles, pipeline events for analytics.
+Complete.`},
+      {name:"Tests & Error Handling",what:"Makes the app reliable. Tests verify resume parsing, scoring consistency, file uploads, and pipeline flows work correctly. Error handling ensures corrupted resumes don't crash the system and users see helpful messages.",
+       prompt:`Build tests and error handling for HireIQ.
+
+FRONTEND (Jest + RTL): ResumeUploader drag-drop and progress, ScoreBar renders correct colors, CandidateTable filtering and sorting, RequirementForm validation (must-have skills required, experience >= 0), PipelineBoard drag between stages, CompareGrid renders radar chart.
+BACKEND (pytest + httpx): auth flow (register/login/me), role CRUD and validation, single file upload + parse flow, batch upload with 3 test PDFs, scoring returns valid 0-100 with breakdown, candidate filtering (by score range, tier, skills), pipeline stage transitions (valid and invalid), analytics calculations, template CRUD.
+ERROR HANDLING: Frontend — ErrorBoundary + toast notifications + retry logic for failed uploads. Backend — consistent error format, custom exceptions (InvalidResumeFormat, ScoringError, BatchUploadError), per-file error handling in batch upload (skip corrupted files, report which failed), file size validation (max 10MB), file type validation (PDF/DOCX only), graceful handling of AI API failures with retry.
+Complete. No placeholders.`},
+      {name:"DevOps & Docs",what:"Makes the app deployable and documented. Docker packages everything for easy setup. GitHub Actions runs tests automatically. README explains how to set everything up and use the platform.",
+       prompt:`Build DevOps for HireIQ. Dockerfile frontend (Node multi-stage), Dockerfile backend (Python slim with PyPDF2 and python-docx), docker-compose.yml (frontend + backend + PostgreSQL + volume for /uploads), GitHub Actions CI/CD (lint + test + build), .env.example with ALL variables documented (ANTHROPIC_API_KEY, DATABASE_URL, JWT_SECRET, UPLOAD_DIR, MAX_FILE_SIZE_MB, MAX_BATCH_SIZE), setup.sh bootstrap script, comprehensive README.md with: project overview, architecture diagram, setup instructions, usage guide (how to create a role, upload resumes, review candidates), API documentation, environment variables reference. Complete.`}
+    ]
+  },
 ];
 
 /* ── GOOGLE SHEETS WEBHOOK ── */
