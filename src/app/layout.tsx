@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bacon Creative Editor",
-  description: "AI-native canvas-based image editor",
+  title: "Conductor Masterclass — Zocket",
+  description: "Zocket's internal masterclass on Conductor — learn to build AI products without writing code",
 };
 
 export default function RootLayout({
